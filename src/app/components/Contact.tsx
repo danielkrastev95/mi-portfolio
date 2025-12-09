@@ -59,20 +59,20 @@ export default function Contact() {
     return (
         <section id="contact" className="max-w-5xl mx-auto px-4 py-24 text-white">
             <motion.h2
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-3xl md:text-4xl font-bold text-center mb-4 uppercase tracking-wide"
             >
                 {t("contact.title")}
             </motion.h2>
 
             <motion.p
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-gray-400 text-center mb-12 max-w-xl mx-auto"
             >
                 {t("contact.subtitle")}
@@ -81,10 +81,10 @@ export default function Contact() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
                 {/* Contact Info - 3 cards verticales */}
                 <motion.div
-                    initial={{ opacity: 0, x: -30 }}
+                    initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                     className="flex flex-col gap-4"
                 >
                     {/* Email Card */}
@@ -146,10 +146,10 @@ export default function Contact() {
 
                 {/* Contact Form */}
                 <motion.form
-                    initial={{ opacity: 0, x: 30 }}
+                    initial={{ opacity: 0, x: 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-4"
                 >
@@ -187,8 +187,8 @@ export default function Contact() {
                         type="submit"
                         disabled={isSubmitting || submitted}
                         className={`w-full py-4 font-medium uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border ${submitted
-                                ? "bg-green-500/10 border-green-500/50 text-green-400"
-                                : "bg-transparent border-white/20 text-white hover:bg-white/5 hover:border-white/40"
+                            ? "bg-green-500/10 border-green-500/50 text-green-400"
+                            : "bg-transparent border-white/20 text-white hover:bg-white/5 hover:border-white/40"
                             } disabled:opacity-50`}
                     >
                         {submitted ? (

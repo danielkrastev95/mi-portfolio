@@ -8,14 +8,14 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Header() {
     const { t } = useLanguage();
-    
+
     const roles = [
         t("header.role1"),
         t("header.role2"),
         t("header.role3"),
         t("header.role4"),
     ];
-    
+
     const [currentRole, setCurrentRole] = useState(0);
     const [displayText, setDisplayText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
@@ -47,9 +47,9 @@ export default function Header() {
         <section className="flex flex-col items-center pt-4 min-h-[45vh] relative">
             {/* Navigation Pills */}
             <motion.nav
-                initial={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0, y: -15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                 className="flex gap-3 mb-4"
             >
                 <Link
@@ -78,9 +78,9 @@ export default function Header() {
             {/* Main Content: Memoji + Text */}
             <div className="flex flex-col md:flex-row items-center justify-center relative mt-4 px-4">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                    transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                     className="w-48 h-48 md:w-80 md:h-80 relative z-10 md:-mr-19 -mb-4 md:mb-16"
                 >
                     <Image
@@ -94,9 +94,9 @@ export default function Header() {
 
                 {/* Text Block */}
                 <motion.div
-                    initial={{ opacity: 0, x: 50 }}
+                    initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                    transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
                     className="flex flex-col leading-none font-bold tracking-tighter text-center md:text-left z-0 font-[family-name:var(--font-space)]"
                 >
                     <span className="text-outline text-[4rem] md:text-[6rem] lg:text-[8rem] uppercase select-none">
@@ -110,9 +110,9 @@ export default function Header() {
 
             {/* Typing Effect Subtitle */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                 className="-mt-2 md:-mt-6 text-center"
             >
                 <div className="h-8 flex items-center justify-center">
@@ -125,9 +125,9 @@ export default function Header() {
 
             {/* Status Badge */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
+                transition={{ duration: 0.6, delay: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
                 className="mt-4 flex flex-wrap justify-center gap-3"
             >
                 <span className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full text-sm text-green-400">

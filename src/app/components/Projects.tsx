@@ -10,14 +10,14 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Projects() {
     const { t } = useLanguage();
-    
+
     return (
         <section id="projects" className="max-w-5xl mx-auto px-4 py-24 text-white">
             <motion.h3
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-3xl md:text-4xl font-bold text-center mb-16 uppercase tracking-wide"
             >
                 {t("projects.title")}
@@ -88,7 +88,7 @@ function ProjectCard({ project, index }: ProjectCardProps) {
             {/* Tags */}
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-auto pt-2 font-mono text-[10px] uppercase tracking-wider text-gray-400 group-hover:text-gray-300 transition-colors">
                 {project.technologies.slice(0, 5).map((tech, i) => (
-                    <span 
+                    <span
                         key={i}
                         className="group-hover:text-white transition-colors"
                         style={{ transitionDelay: `${i * 50}ms` }}
@@ -103,10 +103,10 @@ function ProjectCard({ project, index }: ProjectCardProps) {
     if (isPlanned) {
         return (
             <motion.div
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 0.5, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="border border-white/30 p-6 aspect-[4/3] flex flex-col relative group transition-all duration-500 cursor-default"
             >
                 {CardContent}
@@ -116,10 +116,10 @@ function ProjectCard({ project, index }: ProjectCardProps) {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
         >
             <Link
                 href={`/projects/${project.id}`}
