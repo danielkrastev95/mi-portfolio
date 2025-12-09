@@ -7,7 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 export default function AboutAndExpertise() {
     const { t } = useLanguage();
-    
+
     return (
         <section className="max-w-5xl mx-auto px-4 pb-24 pt-6 md:pt-4 text-white">
 
@@ -24,7 +24,7 @@ export default function AboutAndExpertise() {
 
             {/* Bento Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-32">
-                
+
                 {/* Main Bio - Large Card */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -142,7 +142,7 @@ export default function AboutAndExpertise() {
                             { icon: <Goal className="w-5 h-5" />, label: t("about.interests.volleyball") },
                             { icon: <Music className="w-5 h-5" />, label: t("about.interests.music") },
                         ].map((interest, i) => (
-                            <div 
+                            <div
                                 key={i}
                                 className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all cursor-default"
                             >
@@ -198,6 +198,37 @@ export default function AboutAndExpertise() {
                     className=""
                     delay={0.2}
                 />
+            </motion.div>
+
+            {/* Systems Knowledge Card - Full Width */}
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="mt-4 border border-white bg-[#0f0f0f] p-8 md:p-10 group hover:bg-[#141414] transition-all duration-500"
+            >
+                {/* Header: Icon + Title */}
+                <div className="flex items-center gap-4 mb-6">
+                    <span className="text-white group-hover:scale-110 transition-transform duration-300">
+                        <Server className="w-10 h-10" />
+                    </span>
+                    <h4 className="text-3xl font-bold tracking-tight group-hover:tracking-wide transition-all duration-300">
+                        {t("expertise.systems")}
+                    </h4>
+                </div>
+
+                {/* Systems Technologies */}
+                <div className="flex flex-wrap gap-3">
+                    {["Active Directory", "Azure Portal", "DNS", "SQL Server", "Windows Server"].map((tech) => (
+                        <span
+                            key={tech}
+                            className="px-4 py-2 bg-white/5 border border-white/20 text-sm font-mono text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/40 transition-all duration-300"
+                        >
+                            {tech}
+                        </span>
+                    ))}
+                </div>
             </motion.div>
         </section>
     );

@@ -6,6 +6,12 @@ import { Mail, Linkedin, Github, Send } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import emailjs from "@emailjs/browser";
+
+// EmailJS Configuration
+const EMAILJS_SERVICE_ID = "service_4f34prc";
+const EMAILJS_TEMPLATE_ID = "template_nxqxi2i";
+const EMAILJS_PUBLIC_KEY = "JkoZefzQ9JM0C-G2J";
 
 export default function Contact() {
     const { t } = useLanguage();
@@ -16,20 +22,38 @@ export default function Contact() {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
-        // Simular envío - aquí puedes integrar un servicio como Formspree, EmailJS, etc.
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        setIsSubmitting(false);
-        setSubmitted(true);
-        setFormData({ name: "", email: "", message: "" });
-        
-        // Reset después de 3 segundos
-        setTimeout(() => setSubmitted(false), 3000);
+        setError(false);
+
+        try {
+            await emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                {
+                    name: formData.name,
+                    email: formData.email,
+                    message: formData.message,
+                    title: `Mensaje de ${formData.name}`,
+                },
+                EMAILJS_PUBLIC_KEY
+            );
+
+            setSubmitted(true);
+            setFormData({ name: "", email: "", message: "" });
+
+            // Reset después de 3 segundos
+            setTimeout(() => setSubmitted(false), 3000);
+        } catch (err) {
+            console.error("Error sending email:", err);
+            setError(true);
+            setTimeout(() => setError(false), 3000);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -162,11 +186,10 @@ export default function Contact() {
                     <button
                         type="submit"
                         disabled={isSubmitting || submitted}
-                        className={`w-full py-4 font-medium uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border ${
-                            submitted
+                        className={`w-full py-4 font-medium uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 border ${submitted
                                 ? "bg-green-500/10 border-green-500/50 text-green-400"
                                 : "bg-transparent border-white/20 text-white hover:bg-white/5 hover:border-white/40"
-                        } disabled:opacity-50`}
+                            } disabled:opacity-50`}
                     >
                         {submitted ? (
                             <>

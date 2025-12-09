@@ -55,6 +55,7 @@ const translations: Record<Language, Record<string, string>> = {
         "expertise.backend.desc": "Construcción de APIs escalables con Java, Python y Django.",
         "expertise.database": "Database",
         "expertise.database.desc": "Modelado y gestión eficiente de datos con MySQL y Oracle.",
+        "expertise.systems": "Systems",
 
         // Projects
         "projects.title": "Proyectos",
@@ -129,6 +130,7 @@ const translations: Record<Language, Record<string, string>> = {
         "expertise.backend.desc": "Building scalable APIs & server-side logic with Java, Python & Django.",
         "expertise.database": "Database",
         "expertise.database.desc": "Efficient data modeling and management with MySQL & Oracle.",
+        "expertise.systems": "Systems",
 
         // Projects
         "projects.title": "Projects",
