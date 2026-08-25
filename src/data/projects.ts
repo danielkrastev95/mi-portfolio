@@ -36,7 +36,7 @@ export const projects: Project[] = [
         links: {
             live: "https://sierranevadainsiders.com",
         },
-        status: "in-progress",
+        status: "completed",
         translations: {
             es: {
                 shortDescription: "Plataforma web completa para la comunidad de esquí de Sierra Nevada",

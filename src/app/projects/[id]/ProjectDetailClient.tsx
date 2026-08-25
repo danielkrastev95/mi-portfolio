@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Github, Clock, User, CheckCircle2, Lightbulb, Zap, Code2 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import Footer from "@/app/components/Footer";
 
 interface ProjectDetailClientProps {
     project: Project;
@@ -216,10 +217,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                 )}
             </div>
 
-            {/* Footer */}
-            <footer className="text-center text-gray-500 text-xs py-12 font-light border-t border-white/5">
-                © 2025 Daniel Krastev Manov
-            </footer>
+            <Footer />
         </main>
     );
 }

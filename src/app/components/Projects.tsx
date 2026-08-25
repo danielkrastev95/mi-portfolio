@@ -41,6 +41,12 @@ interface ProjectCardProps {
 function ProjectCard({ project, index }: ProjectCardProps) {
     const { t } = useLanguage();
     const isPlanned = project.status === "planned";
+    const statusBadge =
+        project.status === "completed"
+            ? { labelKey: "project.status.completed", className: "text-green-400 border-green-400/30" }
+            : project.status === "in-progress"
+                ? { labelKey: "project.status.inProgress", className: "text-yellow-400 border-yellow-400/30" }
+                : null;
 
     const CardContent = (
         <>
@@ -76,11 +82,11 @@ function ProjectCard({ project, index }: ProjectCardProps) {
                 )}
             </div>
 
-            {/* Status Badge for in-progress */}
-            {project.status === "in-progress" && (
+            {/* Status Badge */}
+            {statusBadge && (
                 <div className="mb-2">
-                    <span className="text-[10px] uppercase tracking-wider text-yellow-400 border border-yellow-400/30 px-2 py-0.5">
-                        {t("projects.inProgress")}
+                    <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 border ${statusBadge.className}`}>
+                        {t(statusBadge.labelKey)}
                     </span>
                 </div>
             )}

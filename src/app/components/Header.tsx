@@ -59,13 +59,6 @@ export default function Header() {
                 >
                     GIT
                 </Link>
-                <a
-                    href="/daniel-cv.pdf"
-                    download
-                    className="rounded-full border border-white/20 px-4 py-1 text-[10px] text-gray-400 hover:border-white hover:text-white transition-colors cursor-pointer uppercase tracking-wider"
-                >
-                    CV
-                </a>
                 <Link
                     href="https://www.linkedin.com/in/danielkrastevmanov/"
                     target="_blank"
