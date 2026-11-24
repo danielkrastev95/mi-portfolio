@@ -1,5 +1,5 @@
 // src/app/projects/[id]/page.tsx
-import { getProjectById, getAllProjectIds } from "@/data/projects";
+import { projects, getProjectById, getAllProjectIds, getNextProject } from "@/data/projects";
 import { notFound } from "next/navigation";
 import ProjectDetailClient from "./ProjectDetailClient";
 
@@ -32,5 +32,25 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         notFound();
     }
 
-    return <ProjectDetailClient project={project} />;
+    // Only what the "next project" link shows travels to the client.
+    const next = getNextProject(id);
+
+    return (
+        <ProjectDetailClient
+            project={project}
+            position={projects.indexOf(project) + 1}
+            total={projects.length}
+            next={
+                next && {
+                    id: next.id,
+                    title: next.title,
+                    image: next.image,
+                    tagline: {
+                        es: next.translations.es.shortDescription,
+                        en: next.translations.en.shortDescription,
+                    },
+                }
+            }
+        />
+    );
 }

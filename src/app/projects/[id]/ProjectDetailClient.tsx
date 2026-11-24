@@ -1,274 +1,464 @@
 // src/app/projects/[id]/ProjectDetailClient.tsx
 "use client";
 
-import { Project } from "@/data/projects";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Github, Clock, User, CheckCircle2, Lightbulb, Zap, Code2 } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Github } from "lucide-react";
+import type { Language, Project, ProjectHighlight, ProjectNote, Shot } from "@/data/projects";
 import { useLanguage } from "@/lib/LanguageContext";
 import Footer from "@/app/components/Footer";
+import ShotLightbox from "./ShotLightbox";
+import { Reveal, SectionHeading, ShotButton } from "./parts";
+
+export interface NextProjectLink {
+    id: string;
+    title: string;
+    image: string;
+    tagline: Record<Language, string>;
+}
 
 interface ProjectDetailClientProps {
     project: Project;
+    /** 1-based position of this project in the list, and how many there are. */
+    position: number;
+    total: number;
+    next?: NextProjectLink;
 }
 
-export default function ProjectDetailClient({ project }: ProjectDetailClientProps) {
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const SHELL = "mx-auto w-full max-w-6xl px-5 md:px-8";
+const DISPLAY = "font-[family-name:var(--font-space)] font-bold tracking-tighter";
+const EYEBROW = "font-mono text-[11px] uppercase tracking-[0.2em] text-gray-500";
+const PRESSABLE = "transition-[scale,background-color,border-color,color] duration-150 ease-out active:scale-[0.96]";
+const FOCUS = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
+export default function ProjectDetailClient({ project, position, total, next }: ProjectDetailClientProps) {
     const { t, language } = useLanguage();
-    
-    // Get translated content based on current language
     const content = project.translations[language];
 
+    // Every screenshot of the page, in reading order, for the lightbox.
+    const shots: Shot[] = [project.cover, ...project.highlights.flatMap((h) => h.shots), ...project.phoneShots];
+    const [viewer, setViewer] = useState({ index: 0, open: false });
+    const openShot = (shot: Shot) => setViewer({ index: Math.max(shots.indexOf(shot), 0), open: true });
+
+    const statusLabel =
+        project.status === "completed"
+            ? t("project.status.completed")
+            : project.status === "in-progress"
+                ? t("project.status.inProgress")
+                : t("project.status.planned");
+    const statusDot = project.status === "completed" ? "bg-green-400" : project.status === "in-progress" ? "bg-yellow-400" : "bg-gray-500";
+    const liveHost = project.links?.live?.replace(/^https?:\/\//, "").replace(/\/$/, "");
+
     return (
-        <main className="min-h-screen text-white bg-[#0D0D0D]">
-            {/* Hero Section */}
-            <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
-                {/* Background Image with Overlay */}
-                <div className="absolute inset-0">
-                    <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover object-center"
+        <main className="min-h-screen overflow-x-clip bg-[#0D0D0D] text-white">
+            {/* ── Header ─────────────────────────────────────────────── */}
+            <header className={`${SHELL} pt-6`}>
+                <Link
+                    href="/#projects"
+                    className={`group inline-flex items-center gap-2 py-2 ${EYEBROW} transition-colors duration-150 hover:text-white ${FOCUS}`}
+                >
+                    <ArrowLeft className="h-4 w-4 transition-transform duration-200 ease-out group-hover:-translate-x-1" strokeWidth={1.75} />
+                    {t("project.backToProjects")}
+                </Link>
+
+                <div className="pt-14 md:pt-24">
+                    <Reveal className={`flex flex-wrap items-center gap-x-4 gap-y-2 ${EYEBROW}`}>
+                        <span className="tabular-nums text-gray-300">
+                            {pad(position)} / {pad(total)}
+                        </span>
+                        <span aria-hidden="true" className="h-px w-8 bg-white/20" />
+                        <span>{t("project.label")}</span>
+                        <span className="inline-flex items-center gap-2 text-gray-300">
+                            <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${statusDot}`} />
+                            {statusLabel}
+                        </span>
+                    </Reveal>
+
+                    <Reveal delay={100}>
+                        <h1 className={`${DISPLAY} mt-6 text-balance text-[clamp(2.75rem,9vw,7rem)] leading-[0.92]`}>{project.title}</h1>
+                    </Reveal>
+
+                    <Reveal delay={200}>
+                        <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-gray-300 md:text-xl">{content.shortDescription}</p>
+                    </Reveal>
+
+                    <Reveal delay={300}>
+                        <div className="mt-10 grid gap-6 border-t border-white/15 pt-6 md:mt-14 md:grid-cols-4">
+                            <dl className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:col-span-3">
+                                <Meta label={t("project.role")} value={content.role} />
+                                <Meta label={t("project.period")} value={content.period} />
+                                <Meta label={t("project.duration")} value={content.duration} />
+                            </dl>
+                            <div className="flex flex-wrap items-center gap-3 md:justify-end">
+                                {project.links?.live && (
+                                    <Link
+                                        href={project.links.live}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`group inline-flex items-center gap-2 bg-white px-5 py-3 text-sm font-medium text-black hover:bg-gray-200 ${PRESSABLE} ${FOCUS}`}
+                                    >
+                                        {liveHost}
+                                        <ArrowUpRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2} />
+                                    </Link>
+                                )}
+                                {project.links?.github && (
+                                    <Link
+                                        href={project.links.github}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`inline-flex items-center gap-2 border border-white/40 px-5 py-3 text-sm font-medium hover:border-white hover:bg-white/5 ${PRESSABLE} ${FOCUS}`}
+                                    >
+                                        <Github className="h-4 w-4" strokeWidth={2} />
+                                        {t("project.viewCode")}
+                                    </Link>
+                                )}
+                                {project.links?.demo && (
+                                    <Link
+                                        href={project.links.demo}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`inline-flex items-center gap-2 border border-white/40 px-5 py-3 text-sm font-medium hover:border-white hover:bg-white/5 ${PRESSABLE} ${FOCUS}`}
+                                    >
+                                        {t("project.viewDemo")}
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </Reveal>
+                </div>
+            </header>
+
+            {/* ── Cover and figures ──────────────────────────────────── */}
+            <div className={`${SHELL} mt-12 md:mt-16`}>
+                <Reveal delay={400}>
+                    <ShotButton
+                        shot={project.cover}
+                        language={language}
+                        label={t("project.enlarge")}
+                        sizes="(min-width: 1152px) 1088px, 100vw"
                         priority
+                        onOpen={() => openShot(project.cover)}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#0D0D0D]" />
-                </div>
+                </Reveal>
 
-                {/* Back Button */}
-                <div className="absolute top-6 left-6 z-20">
-                    <Link
-                        href="/#projects"
-                        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
-                    >
-                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-sm uppercase tracking-wider">{t("project.backToProjects")}</span>
-                    </Link>
-                </div>
-
-                {/* Hero Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16">
-                    <div className="max-w-5xl mx-auto">
-                        {/* Status Badge */}
-                        <StatusBadge status={project.status} />
-
-                        {/* Title */}
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mt-4 font-poppins">
-                            {project.title}
-                        </h1>
-
-                        {/* Short Description */}
-                        <p className="text-lg md:text-xl text-gray-300 mt-4 max-w-2xl">
-                            {content.shortDescription}
-                        </p>
-                    </div>
-                </div>
+                {project.stats.length > 0 && (
+                    <Reveal className="mt-4">
+                        <dl className="grid grid-cols-2 border-l border-t border-white/10 md:grid-cols-4">
+                            {project.stats.map((stat) => (
+                                <div key={stat.label.es} className="flex flex-col-reverse justify-end gap-2 border-b border-r border-white/10 px-5 py-6 md:px-6 md:py-7">
+                                    <dt className="font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-gray-500">{stat.label[language]}</dt>
+                                    <dd className={`${DISPLAY} text-4xl tabular-nums md:text-5xl`}>{stat.value}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </Reveal>
+                )}
             </div>
 
-            {/* Content Section */}
-            <div className="max-w-5xl mx-auto px-6 md:px-8 py-16">
-                {/* Quick Info Bar */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-                    <InfoCard icon={<User className="w-5 h-5" />} label={t("project.role")} value={content.role} />
-                    <InfoCard icon={<Clock className="w-5 h-5" />} label={t("project.duration")} value={content.duration} />
-                    <InfoCard
-                        icon={<Code2 className="w-5 h-5" />}
-                        label="Tech Stack"
-                        value={`${project.technologies.length} ${language === 'es' ? 'tecnologías' : 'technologies'}`}
-                    />
-                    <InfoCard
-                        icon={<Zap className="w-5 h-5" />}
-                        label={t("project.features")}
-                        value={`${content.features.length} ${language === 'es' ? 'características' : 'features'}`}
-                    />
+            {/* ── About ──────────────────────────────────────────────── */}
+            <section className={`${SHELL} mt-24 md:mt-36`}>
+                <Reveal className="grid gap-8 lg:grid-cols-12 lg:gap-12">
+                    <h2 className={`${EYEBROW} lg:col-span-4 lg:pt-2`}>{t("project.overview")}</h2>
+                    <div className="lg:col-span-8">
+                        {content.overview.map((paragraph, i) =>
+                            i === 0 ? (
+                                <p key={i} className="text-pretty text-xl leading-snug text-white md:text-[1.7rem] md:leading-[1.3]">
+                                    {paragraph}
+                                </p>
+                            ) : (
+                                <p key={i} className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-gray-400 md:text-lg">
+                                    {paragraph}
+                                </p>
+                            ),
+                        )}
+                    </div>
+                </Reveal>
+            </section>
+
+            {/* ── Highlights ─────────────────────────────────────────── */}
+            <section className={`${SHELL} mt-24 md:mt-36`}>
+                <Reveal>
+                    <SectionHeading title={t("project.highlights")} count={project.highlights.length} />
+                </Reveal>
+                <div className="space-y-20 md:space-y-32">
+                    {project.highlights.map((highlight, i) => (
+                        <Reveal key={highlight.id}>
+                            <Highlight
+                                highlight={highlight}
+                                index={i}
+                                language={language}
+                                enlargeLabel={t("project.enlarge")}
+                                onOpen={openShot}
+                            />
+                        </Reveal>
+                    ))}
                 </div>
+            </section>
 
-                {/* About the Project */}
-                <section className="mb-16">
-                    <SectionTitle icon={<Lightbulb />} title={language === 'es' ? 'Sobre el Proyecto' : 'About the Project'} />
-                    <div className="prose prose-invert max-w-none">
-                        {content.fullDescription.split('\n\n').map((paragraph: string, index: number) => (
-                            <p key={index} className="text-gray-300 text-lg leading-relaxed mb-4">
-                                {paragraph}
-                            </p>
+            {/* ── On mobile ──────────────────────────────────────────── */}
+            {project.phoneShots.length > 0 && (
+                <section className="mt-24 md:mt-36">
+                    <Reveal className={SHELL}>
+                        <SectionHeading title={t("project.mobile")} count={project.phoneShots.length} />
+                    </Reveal>
+                    <Reveal className="mx-auto w-full max-w-6xl">
+                        <ul className="phone-row flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 md:px-8 lg:grid lg:grid-cols-5 lg:gap-5 lg:overflow-visible">
+                            {project.phoneShots.map((shot) => (
+                                <li key={shot.src} className="w-[58%] shrink-0 snap-center sm:w-[34%] lg:w-auto">
+                                    <ShotButton
+                                        shot={shot}
+                                        language={language}
+                                        label={t("project.enlarge")}
+                                        sizes="(min-width: 1024px) 200px, (min-width: 640px) 34vw, 58vw"
+                                        onOpen={() => openShot(shot)}
+                                    />
+                                    <p className="mt-3 text-pretty text-xs leading-relaxed text-gray-500">{shot.alt[language]}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </Reveal>
+                </section>
+            )}
+
+            {/* ── Under the hood ─────────────────────────────────────── */}
+            {project.notes.length > 0 && (
+                <section className={`${SHELL} mt-24 md:mt-36`}>
+                    <Reveal>
+                        <SectionHeading title={t("project.notes")} count={project.notes.length} />
+                    </Reveal>
+                    <div className="grid gap-4 lg:grid-cols-3">
+                        {project.notes.map((note, i) => (
+                            <Reveal key={note.id} delay={i * 100} className="flex">
+                                <Note note={note} index={i} language={language} />
+                            </Reveal>
                         ))}
                     </div>
                 </section>
+            )}
 
-                {/* Technologies Used */}
-                <section className="mb-16">
-                    <SectionTitle icon={<Code2 />} title={t("project.technologies")} />
-                    <div className="flex flex-wrap gap-3">
-                        {project.technologies.map((tech: string, index: number) => (
-                            <span
-                                key={index}
-                                className="px-4 py-2 border border-white/20 rounded-full text-sm font-mono 
-                                         hover:border-white hover:bg-white/5 transition-all cursor-default"
-                            >
-                                {tech}
-                            </span>
-                        ))}
-                    </div>
-                </section>
+            {/* ── Also includes, and the stack ───────────────────────── */}
+            <section className={`${SHELL} mt-24 md:mt-36`}>
+                <div className="grid gap-16 lg:grid-cols-12 lg:gap-12">
+                    <Reveal className="lg:col-span-7">
+                        <h2 className={`${EYEBROW} mb-6`}>{t("project.alsoIncludes")}</h2>
+                        <ul className="border-t border-white/10">
+                            {content.features.map((feature, i) => (
+                                <li key={feature} className="flex gap-5 border-b border-white/10 py-4 text-[15px] leading-relaxed text-gray-300">
+                                    <span className="pt-0.5 font-mono text-xs tabular-nums text-gray-600">{pad(i + 1)}</span>
+                                    <span className="text-pretty">{feature}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </Reveal>
 
-                {/* Features Grid */}
-                {content.features.length > 0 && content.features[0] !== "En desarrollo" && content.features[0] !== "In development" && (
-                    <section className="mb-16">
-                        <SectionTitle icon={<CheckCircle2 />} title={t("project.features")} />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {content.features.map((feature: string, index: number) => (
-                                <div
-                                    key={index}
-                                    className="flex items-start gap-3 p-4 border border-white/10 bg-white/5 
-                                             hover:border-white/30 transition-colors"
-                                >
-                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                                    <span className="text-gray-300">{feature}</span>
+                    <Reveal className="lg:col-span-5" delay={100}>
+                        <h2 className={`${EYEBROW} mb-6`}>{t("project.stack")}</h2>
+                        <div className="border-t border-white/10">
+                            {project.stack.map((group) => (
+                                <div key={group.label.es} className="border-b border-white/10 py-5">
+                                    <h3 className="mb-3 text-sm font-medium text-white">{group.label[language]}</h3>
+                                    <ul className="flex flex-wrap gap-2">
+                                        {group.items.map((item) => (
+                                            <li key={item} className="rounded-full border border-white/20 px-3 py-1.5 font-mono text-xs text-gray-300">
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             ))}
                         </div>
-                    </section>
-                )}
+                    </Reveal>
+                </div>
+            </section>
 
-                {/* Challenges & Learnings */}
-                {(content.challenges.length > 0 || content.learnings.length > 0) && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-                        {/* Challenges */}
-                        {content.challenges.length > 0 && (
-                            <section>
-                                <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                    <span className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
-                                        <Zap className="w-4 h-4 text-orange-500" />
-                                    </span>
-                                    {t("project.challenges")}
-                                </h3>
-                                <ul className="space-y-3">
-                                    {content.challenges.map((challenge: string, index: number) => (
-                                        <li key={index} className="flex items-center gap-3 text-gray-400">
-                                            <span className="text-orange-500">→</span>
-                                            {challenge}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-                        )}
-
-                        {/* Learnings */}
-                        {content.learnings.length > 0 && (
-                            <section>
-                                <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-                                    <span className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                                        <Lightbulb className="w-4 h-4 text-blue-500" />
-                                    </span>
-                                    {t("project.learnings")}
-                                </h3>
-                                <ul className="space-y-3">
-                                    {content.learnings.map((learning: string, index: number) => (
-                                        <li key={index} className="flex items-center gap-3 text-gray-400">
-                                            <span className="text-blue-500">→</span>
-                                            {learning}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-                        )}
+            {/* ── Challenges and learnings ───────────────────────────── */}
+            {(content.challenges.length > 0 || content.learnings.length > 0) && (
+                <section className={`${SHELL} mt-24 md:mt-36`}>
+                    <div className="grid gap-16 md:grid-cols-2 md:gap-12">
+                        <Reveal>
+                            <NumberedList title={t("project.challenges")} items={content.challenges} />
+                        </Reveal>
+                        <Reveal delay={100}>
+                            <NumberedList title={t("project.learnings")} items={content.learnings} />
+                        </Reveal>
                     </div>
-                )}
+                </section>
+            )}
 
-                {/* Links Section */}
-                {project.links && Object.keys(project.links).length > 0 && (
-                    <section className="border-t border-white/10 pt-12">
-                        <h3 className="text-xl font-bold mb-6">{language === 'es' ? 'Enlaces del Proyecto' : 'Project Links'}</h3>
-                        <div className="flex flex-wrap gap-4">
-                            {project.links.live && (
-                                <Link
-                                    href={project.links.live}
-                                    target="_blank"
-                                    className="flex items-center gap-2 px-6 py-3 bg-white text-black font-medium 
-                                             hover:bg-gray-200 transition-colors"
-                                >
-                                    <ExternalLink className="w-4 h-4" />
-                                    {t("project.visitSite")}
-                                </Link>
-                            )}
-                            {project.links.github && (
-                                <Link
-                                    href={project.links.github}
-                                    target="_blank"
-                                    className="flex items-center gap-2 px-6 py-3 border border-white 
-                                             hover:bg-white hover:text-black transition-colors"
-                                >
-                                    <Github className="w-4 h-4" />
-                                    {t("project.viewCode")}
-                                </Link>
-                            )}
-                            {project.links.demo && (
-                                <Link
-                                    href={project.links.demo}
-                                    target="_blank"
-                                    className="flex items-center gap-2 px-6 py-3 border border-white/50 
-                                             hover:border-white transition-colors"
-                                >
-                                    <ExternalLink className="w-4 h-4" />
-                                    {t("project.viewDemo")}
-                                </Link>
-                            )}
-                        </div>
-                    </section>
-                )}
+            {/* ── Next project ───────────────────────────────────────── */}
+            {next && (
+                <section className={`${SHELL} mt-24 md:mt-36`}>
+                    <Reveal>
+                        <Link
+                            href={`/projects/${next.id}`}
+                            className={`group grid items-stretch border border-white/25 transition-[background-color,border-color] duration-200 ease-out hover:border-white hover:bg-[#111] md:grid-cols-[1fr_22rem] ${FOCUS}`}
+                        >
+                            <div className="flex flex-col justify-between gap-10 p-7 md:p-10">
+                                <span className={EYEBROW}>{t("project.next")}</span>
+                                <div>
+                                    <span className={`${DISPLAY} flex items-center gap-4 text-4xl leading-none md:text-6xl`}>
+                                        {next.title}
+                                        <ArrowRight className="h-7 w-7 shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-2 md:h-9 md:w-9" strokeWidth={1.75} />
+                                    </span>
+                                    <p className="mt-4 max-w-md text-pretty text-sm leading-relaxed text-gray-400">{next.tagline[language]}</p>
+                                </div>
+                            </div>
+                            <div className="relative hidden min-h-56 overflow-hidden border-l border-white/15 md:block">
+                                <Image
+                                    src={next.image}
+                                    alt=""
+                                    fill
+                                    sizes="352px"
+                                    className="object-cover grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0"
+                                />
+                            </div>
+                        </Link>
+                    </Reveal>
+                </section>
+            )}
+
+            <div className="mt-24 md:mt-32">
+                <Footer />
             </div>
 
-            <Footer />
+            <ShotLightbox
+                shots={shots}
+                index={viewer.index}
+                open={viewer.open}
+                language={language}
+                labels={{
+                    gallery: t("project.gallery"),
+                    close: t("project.close"),
+                    previous: t("project.previous"),
+                    next: t("project.nextShot"),
+                }}
+                onIndexChange={(index) => setViewer((v) => ({ ...v, index }))}
+                onOpenChange={(open) => setViewer((v) => ({ ...v, open }))}
+            />
         </main>
     );
 }
 
-// Component: Status Badge
-function StatusBadge({ status }: { status: Project["status"] }) {
-    const { t } = useLanguage();
-    
-    const styles = {
-        completed: "bg-green-500/20 text-green-400 border-green-500/30",
-        "in-progress": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-        planned: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-    };
-
-    const getLabel = (status: Project["status"]) => {
-        switch (status) {
-            case "completed":
-                return t("project.status.completed");
-            case "in-progress":
-                return t("project.status.inProgress");
-            case "planned":
-                return t("project.status.planned");
-        }
-    };
-
+function Meta({ label, value }: { label: string; value: string }) {
     return (
-        <span className={`inline-flex px-3 py-1 text-xs uppercase tracking-wider border ${styles[status]}`}>
-            {getLabel(status)}
-        </span>
-    );
-}
-
-// Component: Info Card
-function InfoCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-    return (
-        <div className="p-4 border border-white/10 bg-white/5">
-            <div className="flex items-center gap-2 text-gray-500 mb-2">
-                {icon}
-                <span className="text-xs uppercase tracking-wider">{label}</span>
-            </div>
-            <p className="text-white font-medium">{value}</p>
+        <div>
+            <dt className={EYEBROW}>{label}</dt>
+            <dd className="mt-2 text-sm text-white">{value}</dd>
         </div>
     );
 }
 
-// Component: Section Title
-function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
+interface HighlightProps {
+    highlight: ProjectHighlight;
+    index: number;
+    language: Language;
+    enlargeLabel: string;
+    onOpen: (shot: Shot) => void;
+}
+
+/** One feature: the explanation on one side, its screenshots on the other, alternating. */
+function Highlight({ highlight, index, language, enlargeLabel, onOpen }: HighlightProps) {
+    const copy = highlight[language];
+    const [main, ...rest] = highlight.shots;
+    const flipped = index % 2 === 1;
+
     return (
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-            <span className="text-gray-500">{icon}</span>
-            {title}
-        </h2>
+        <article className="grid gap-8 lg:grid-cols-12 lg:gap-12">
+            <div className={`lg:col-span-5 ${flipped ? "lg:order-2" : ""}`}>
+                <div className="lg:sticky lg:top-20">
+                    <div className="mb-5 flex items-center gap-3">
+                        <span className="font-mono text-xs tabular-nums text-gray-300">{pad(index + 1)}</span>
+                        <span aria-hidden="true" className="h-px w-6 bg-white/20" />
+                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-gray-500">{highlight.tag}</span>
+                    </div>
+                    <h3 className="text-balance text-2xl font-bold leading-[1.15] tracking-tight md:text-[1.9rem]">{copy.title}</h3>
+                    <div className="mt-5 space-y-4 text-pretty text-[15px] leading-relaxed text-gray-400 md:text-base">
+                        {copy.body.map((paragraph) => (
+                            <p key={paragraph}>{paragraph}</p>
+                        ))}
+                    </div>
+                    <ul className="mt-7 border-t border-white/10">
+                        {copy.points.map((point) => (
+                            <li key={point} className="flex gap-3 border-b border-white/10 py-3 text-sm leading-relaxed text-gray-300">
+                                <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 bg-white/60" />
+                                <span className="text-pretty">{point}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div className={`lg:col-span-7 ${flipped ? "lg:order-1" : ""}`}>
+                <div className="lg:sticky lg:top-20">
+                    {main && (
+                        <ShotButton
+                            shot={main}
+                            language={language}
+                            label={enlargeLabel}
+                            sizes="(min-width: 1024px) 620px, 100vw"
+                            onOpen={() => onOpen(main)}
+                        />
+                    )}
+                    {rest.length > 0 && (
+                        <div className="mt-3 grid grid-cols-3 gap-3">
+                            {rest.map((shot) => (
+                                <ShotButton
+                                    key={shot.src}
+                                    shot={shot}
+                                    language={language}
+                                    label={enlargeLabel}
+                                    sizes="(min-width: 1024px) 200px, 33vw"
+                                    onOpen={() => onOpen(shot)}
+                                />
+                            ))}
+                        </div>
+                    )}
+                    {main && <p className="mt-3 text-pretty text-xs leading-relaxed text-gray-500">{main.alt[language]}</p>}
+                </div>
+            </div>
+        </article>
+    );
+}
+
+/** Work with no screen to show: a card of text. */
+function Note({ note, index, language }: { note: ProjectNote; index: number; language: Language }) {
+    const copy = note[language];
+
+    return (
+        <article className="flex w-full flex-col border border-white/15 bg-[#0f0f0f] p-7 md:p-8">
+            <div className="mb-6 flex items-start justify-between gap-4">
+                <span className="font-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-gray-500">{note.tag}</span>
+                <span className="font-mono text-xs tabular-nums text-gray-600">{pad(index + 1)}</span>
+            </div>
+            <h3 className="text-balance text-xl font-bold leading-snug tracking-tight">{copy.title}</h3>
+            <p className="mt-4 text-pretty text-sm leading-relaxed text-gray-400">{copy.body}</p>
+            <ul className="mt-auto pt-7">
+                {copy.points.map((point) => (
+                    <li key={point} className="flex gap-3 border-t border-white/10 py-3 text-[13px] leading-relaxed text-gray-300">
+                        <span aria-hidden="true" className="mt-[0.6em] h-1 w-1 shrink-0 bg-white/60" />
+                        <span className="text-pretty">{point}</span>
+                    </li>
+                ))}
+            </ul>
+        </article>
+    );
+}
+
+function NumberedList({ title, items }: { title: string; items: string[] }) {
+    return (
+        <div>
+            <h2 className={`${EYEBROW} mb-6`}>{title}</h2>
+            <ol className="border-t border-white/10">
+                {items.map((item, i) => (
+                    <li key={item} className="flex gap-5 border-b border-white/10 py-4 text-[15px] leading-relaxed text-gray-300">
+                        <span className="pt-0.5 font-mono text-xs tabular-nums text-gray-600">{pad(i + 1)}</span>
+                        <span className="text-pretty">{item}</span>
+                    </li>
+                ))}
+            </ol>
+        </div>
     );
 }
