@@ -23,6 +23,7 @@ export default function Expertise() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-3xl md:text-4xl font-bold text-center mb-16 uppercase tracking-wide"
             >
@@ -34,6 +35,7 @@ export default function Expertise() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="grid grid-cols-1 md:grid-cols-3 border border-white bg-[#0f0f0f]"
             >
@@ -70,6 +72,7 @@ export default function Expertise() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="mt-4 border border-white bg-[#0f0f0f] p-6 md:p-8 group hover:bg-[#141414] transition-all duration-500"
             >
@@ -118,6 +121,7 @@ function ExpertiseCard({ icon, title, description, className = "", delay = 0 }: 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-50px" }}
+            data-reveal
             transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
             className={`p-8 md:p-10 flex flex-col h-full min-h-[350px] bg-[#0f0f0f] group hover:bg-[#141414] transition-all duration-500 ${className}`}
         >

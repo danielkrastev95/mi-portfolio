@@ -39,6 +39,7 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-3xl md:text-4xl font-bold text-center mb-12 uppercase tracking-wide"
             >
@@ -52,6 +53,7 @@ export default function Contact() {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
+                        data-reveal
                         transition={{ duration: 0.7, delay: i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
                     >
                         <Link

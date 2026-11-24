@@ -17,6 +17,7 @@ export default function Projects() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-3xl md:text-4xl font-bold text-center mb-16 uppercase tracking-wide"
             >
@@ -110,12 +111,16 @@ function ProjectCard({ project, index }: ProjectCardProps) {
         return (
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 0.5, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-                className="border border-white/30 p-6 aspect-[4/3] flex flex-col relative group transition-all duration-500 cursor-default"
             >
-                {CardContent}
+                {/* The dimmed look lives on the card, not on the animated wrapper,
+                    so it survives where the scroll animation is switched off. */}
+                <div className="border border-white/30 p-6 aspect-[4/3] flex flex-col relative group cursor-default opacity-50">
+                    {CardContent}
+                </div>
             </motion.div>
         );
     }
@@ -125,6 +130,7 @@ function ProjectCard({ project, index }: ProjectCardProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
+            data-reveal
             transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
         >
             <Link

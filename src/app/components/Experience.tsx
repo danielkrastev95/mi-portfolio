@@ -23,6 +23,7 @@ export default function Experience() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-3xl md:text-4xl font-bold text-center mb-16 uppercase tracking-wide"
             >
@@ -34,6 +35,7 @@ export default function Experience() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
+                data-reveal
                 transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
                 className="border border-white bg-[#0f0f0f] p-8 md:p-10 group hover:bg-[#141414] transition-all duration-500"
             >
@@ -74,6 +76,7 @@ function AreaCard({ areaKey, icon, index }: { areaKey: string; icon: React.React
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
+            data-reveal
             transition={{ duration: 0.7, delay: index * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
             className="flex flex-col border border-white/20 bg-[#0f0f0f] p-8 group hover:bg-[#141414] hover:border-white/40 transition-all duration-500"
         >

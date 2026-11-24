@@ -241,3 +241,19 @@ dialog.lightbox[open]::backdrop {
   transform: none;
   filter: none;
 }
+
+/* ── Touch screens ────────────────────────────────────────────────────── */
+
+/* On a phone nothing waits for the scroll before it shows. A fast flick
+   brought sections on screen while they were still hidden, so they read as a
+   black gap that then faded in. Here they are simply there. Applies to the
+   home sections (`data-reveal`, animated by framer-motion with inline styles,
+   hence the !important) and to the project pages (`.reveal`). */
+@media (hover: none), (pointer: coarse) {
+  [data-reveal],
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
