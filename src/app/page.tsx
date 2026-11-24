@@ -12,11 +12,12 @@ export default function Home() {
     // El fondo negro ya está en layout.tsx, pero aseguramos el texto blanco
     <main className="min-h-screen text-white overflow-x-hidden">
       <div className="w-full md:w-[60%] mx-auto">
+        {/* Who I am, then the work that shows it, then the role and the skills behind it. */}
         <Header />
         <About />
+        <Projects />
         <Experience />
         <Expertise />
-        <Projects />
         <Contact />
 
         <Footer />
