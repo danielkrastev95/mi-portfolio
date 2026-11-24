@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -44,7 +43,7 @@ export default function Header() {
     }, [displayText, isDeleting, currentRole]);
 
     return (
-        <section className="flex flex-col items-center pt-4 min-h-[45vh] relative">
+        <section className="flex flex-col items-center pt-4 pb-12 md:pb-20 min-h-[45vh] relative">
             {/* Navigation Pills */}
             <motion.nav
                 initial={{ opacity: 0, y: -15 }}
@@ -68,45 +67,32 @@ export default function Header() {
                 </Link>
             </motion.nav>
 
-            {/* Main Content: Memoji + Text */}
-            <div className="flex flex-col md:flex-row items-center justify-center relative mt-4 px-4">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
+            {/* The name, on its own: outlined first name over a solid surname */}
+            <h1 className="mt-12 md:mt-20 px-4 flex flex-col items-center text-center font-bold uppercase tracking-tighter leading-[0.86] select-none font-[family-name:var(--font-space)] text-[clamp(4rem,19vw,7rem)] md:text-[clamp(6rem,11.5vw,13rem)]">
+                <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="w-48 h-48 md:w-80 md:h-80 relative z-10 md:-mr-19 -mb-4 md:mb-16"
+                    className="text-outline block"
                 >
-                    <Image
-                        src="/memoji.png"
-                        alt="Daniel Krastev Memoji"
-                        fill
-                        className="object-contain"
-                        priority
-                    />
-                </motion.div>
-
-                {/* Text Block */}
-                <motion.div
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-                    className="flex flex-col leading-none font-bold tracking-tighter text-center md:text-left z-0 font-[family-name:var(--font-space)]"
+                    Daniel
+                </motion.span>
+                <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="text-white glow-text block"
                 >
-                    <span className="text-outline text-[4rem] md:text-[6rem] lg:text-[8rem] uppercase select-none">
-                        Daniel
-                    </span>
-                    <span className="text-white text-[4rem] md:text-[6rem] lg:text-[8rem] uppercase -mt-2 md:-mt-4 glow-text">
-                        Krastev
-                    </span>
-                </motion.div>
-            </div>
+                    Krastev
+                </motion.span>
+            </h1>
 
             {/* Typing Effect Subtitle */}
             <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                className="-mt-2 md:-mt-6 text-center"
+                transition={{ duration: 0.6, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                className="mt-6 md:mt-8 text-center"
             >
                 <div className="h-8 flex items-center justify-center">
                     <span className="text-lg md:text-xl text-gray-400 font-mono">
@@ -120,7 +106,7 @@ export default function Header() {
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                transition={{ duration: 0.6, delay: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 className="mt-4 flex flex-wrap justify-center gap-3"
             >
                 <span className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full text-sm text-green-400">
